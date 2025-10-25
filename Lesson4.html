@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Japanese Learning - Lesson 9</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; animation: fadeIn 0.6s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; }
+    h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .subtitle { font-size: 1.2em; opacity: 0.9; }
+    .nav-tabs { display: flex; background: #f8f9fa; border-bottom: 3px solid #667eea; overflow-x: auto; }
+    .nav-tab { flex: 1; padding: 20px; text-align: center; cursor: pointer; border: none; background: #f8f9fa; font-size: 1.1em; font-weight: 600; color: #555; transition: all 0.3s ease; white-space: nowrap; }
+    .nav-tab:hover { background: #e9ecef; color: #667eea; }
+    .nav-tab.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; }
+    .content-section { display: none; padding: 40px; animation: slideIn 0.4s ease-out; }
+    .content-section.active { display: block; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    .section-title { font-size: 2em; color: #667eea; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 3px solid #667eea; }
+    .subsection-title { font-size: 1.5em; color: #764ba2; margin: 30px 0 20px 0; padding-left: 15px; border-left: 5px solid #764ba2; }
+    .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .word-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; padding: 25px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; overflow: visible; }
+    .word-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+    .word-card.active { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+    .word-card::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255,255,255,0.3); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
+    .word-card:active::before { width: 300px; height: 300px; }
+    .japanese { font-size: 2em; font-weight: bold; color: white; margin-bottom: 10px; position: relative; }
+    .romaji { font-size: 1.1em; color: rgba(255,255,255,0.9); margin-bottom: 15px; font-style: italic; }
+    .english { font-size: 1em; color: rgba(255,255,255,0.95); line-height: 1.5; }
+    .speaker-icon { position: absolute; top: 15px; right: 15px; font-size: 1.5em; animation: float 2s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    .translation-hidden { display: none; }
+    .word-card.active .translation-hidden { display: block; animation: fadeIn 0.3s ease-out; }
+    .table-container { overflow-x: auto; margin: 30px 0; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; text-align: left; font-size: 1.1em; }
+    td { padding: 15px; border-bottom: 1px solid #e9ecef; }
+    tr:hover { background: #f8f9fa; }
+    .clickable-jp { color: #667eea; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: all 0.2s ease; display: inline-block; position: relative; }
+    .clickable-jp:hover { background: #667eea; color: white; transform: scale(1.05); }
+    .grammar-box { background: #f8f9fa; border-left: 5px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 8px; }
+    .grammar-example { margin: 15px 0; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .conversation-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; margin: 20px 0; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .conversation-line { margin: 15px 0; padding: 15px; background: white; border-radius: 10px; border-left: 4px solid #667eea; }
+    .speaker { font-weight: bold; color: #764ba2; margin-bottom: 8px; }
+    .answer-romaji { color: #1e90ff; font-weight: 600; }
+    .tooltip { position: relative; display: inline-block; }
+    .tooltip .tooltiptext { visibility: hidden; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 8px 12px; position: absolute; z-index: 999; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s, visibility 0.3s; white-space: nowrap; font-size: 0.95em; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #333 transparent transparent transparent; }
+    .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+    @media (max-width: 768px) { .word-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8em; } .nav-tab { font-size: 0.9em; padding: 15px 10px; } .content-section { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🇯🇵 Interactive Japanese Learning — Lesson 4</h1>
+      <p class="subtitle">Click any speaker icon to hear pronunciation</p>
+    </header>
+
+    <div class="nav-tabs">
+      <!-- pass the button element (this) into showSection -->
+      <button class="nav-tab active" onclick="showSection(this, 'lesson9')">Lesson 4</button>
+      <button class="nav-tab" onclick="showSection(this, 'translation9')">Translation Activity 4</button>
+    </div>
+
+    <div id="lesson9" class="content-section active">
+      <h2 class="section-title">Lesson 4: Daily Activities, Places, Time Expressions, and Basic Conversations</h2>
+
+     <h3 class="subsection-title">Vocabulary</h3>
+<div class="word-grid">
+  <!-- Verbs -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('おきます')">🔊</span>
+    <div class="japanese">おきます</div>
+    <div class="romaji">Okimasu</div>
+    <div class="english translation-hidden">get up, wake up</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ねます')">🔊</span>
+    <div class="japanese">ねます</div>
+    <div class="romaji">Nemasu</div>
+    <div class="english translation-hidden">sleep, go to bed</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('はたらきます')">🔊</span>
+    <div class="japanese">はたらきます</div>
+    <div class="romaji">Hatarakimasu</div>
+    <div class="english translation-hidden">work</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('やすみます')">🔊</span>
+    <div class="japanese">やすみます</div>
+    <div class="romaji">Yasumimasu</div>
+    <div class="english translation-hidden">take rest, take holiday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('べんきょうします')">🔊</span>
+    <div class="japanese">べんきょうします</div>
+    <div class="romaji">Benkyo shimasu</div>
+    <div class="english translation-hidden">study</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('おわります')">🔊</span>
+    <div class="japanese">おわります</div>
+    <div class="romaji">Owarimasu</div>
+    <div class="english translation-hidden">finish</div>
+  </div>
+
+  <!-- Places -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('デパート')">🔊</span>
+    <div class="japanese">デパート</div>
+    <div class="romaji">Depāto</div>
+    <div class="english translation-hidden">department store</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ぎんこう')">🔊</span>
+    <div class="japanese">ぎんこう</div>
+    <div class="romaji">Ginkō</div>
+    <div class="english translation-hidden">bank</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ゆうびんきょく')">🔊</span>
+    <div class="japanese">ゆうびんきょく</div>
+    <div class="romaji">Yūbinkyoku</div>
+    <div class="english translation-hidden">post office</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('としょかん')">🔊</span>
+    <div class="japanese">としょかん</div>
+    <div class="romaji">Toshokan</div>
+    <div class="english translation-hidden">library</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('びじゅつかん')">🔊</span>
+    <div class="japanese">びじゅつかん</div>
+    <div class="romaji">Bijutsukan</div>
+    <div class="english translation-hidden">art museum</div>
+  </div>
+
+  <!-- Time words -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('いま')">🔊</span>
+    <div class="japanese">いま</div>
+    <div class="romaji">Ima</div>
+    <div class="english translation-hidden">now</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('じ')">🔊</span>
+    <div class="japanese">じ</div>
+    <div class="romaji">Ji</div>
+    <div class="english translation-hidden">o’clock</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ふん（ぷん）')">🔊</span>
+    <div class="japanese">ふん（ぷん）</div>
+    <div class="romaji">Fun (pun)</div>
+    <div class="english translation-hidden">minute</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('はん')">🔊</span>
+    <div class="japanese">はん</div>
+    <div class="romaji">Han</div>
+    <div class="english translation-hidden">half</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('なんじ')">🔊</span>
+    <div class="japanese">なんじ</div>
+    <div class="romaji">Nan-ji</div>
+    <div class="english translation-hidden">what time</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('なんぷん')">🔊</span>
+    <div class="japanese">なんぷん</div>
+    <div class="romaji">Nan-pun</div>
+    <div class="english translation-hidden">what minute</div>
+  </div>
+
+  <!-- Day and time expressions -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ごぜん')">🔊</span>
+    <div class="japanese">ごぜん</div>
+    <div class="romaji">Gozen</div>
+    <div class="english translation-hidden">a.m., morning</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ごご')">🔊</span>
+    <div class="japanese">ごご</div>
+    <div class="romaji">Gogo</div>
+    <div class="english translation-hidden">p.m., afternoon</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('あさ')">🔊</span>
+    <div class="japanese">あさ</div>
+    <div class="romaji">Asa</div>
+    <div class="english translation-hidden">morning</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ひる')">🔊</span>
+    <div class="japanese">ひる</div>
+    <div class="romaji">Hiru</div>
+    <div class="english translation-hidden">daytime, noon</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ばん（よる）')">🔊</span>
+    <div class="japanese">ばん（よる）</div>
+    <div class="romaji">Ban (yoru)</div>
+    <div class="english translation-hidden">night, evening</div>
+  </div>
+
+  <!-- Date and schedule -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('おととい')">🔊</span>
+    <div class="japanese">おととい</div>
+    <div class="romaji">Ototoi</div>
+    <div class="english translation-hidden">the day before yesterday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('きのう')">🔊</span>
+    <div class="japanese">きのう</div>
+    <div class="romaji">Kinō</div>
+    <div class="english translation-hidden">yesterday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('きょう')">🔊</span>
+    <div class="japanese">きょう</div>
+    <div class="romaji">Kyō</div>
+    <div class="english translation-hidden">today</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('あした')">🔊</span>
+    <div class="japanese">あした</div>
+    <div class="romaji">Ashita</div>
+    <div class="english translation-hidden">tomorrow</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('あさって')">🔊</span>
+    <div class="japanese">あさって</div>
+    <div class="romaji">Asatte</div>
+    <div class="english translation-hidden">the day after tomorrow</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('けさ')">🔊</span>
+    <div class="japanese">けさ</div>
+    <div class="romaji">Kesa</div>
+    <div class="english translation-hidden">this morning</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('こんばん')">🔊</span>
+    <div class="japanese">こんばん</div>
+    <div class="romaji">Konban</div>
+    <div class="english translation-hidden">this evening, tonight</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('やすみ')">🔊</span>
+    <div class="japanese">やすみ</div>
+    <div class="romaji">Yasumi</div>
+    <div class="english translation-hidden">rest, a holiday, a day off</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ひるやすみ')">🔊</span>
+    <div class="japanese">ひるやすみ</div>
+    <div class="romaji">Hiruyasumi</div>
+    <div class="english translation-hidden">lunchtime</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('まいあさ')">🔊</span>
+    <div class="japanese">まいあさ</div>
+    <div class="romaji">Maiasa</div>
+    <div class="english translation-hidden">every morning</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('まいばん')">🔊</span>
+    <div class="japanese">まいばん</div>
+    <div class="romaji">Maiban</div>
+    <div class="english translation-hidden">every night</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('まいにち')">🔊</span>
+    <div class="japanese">まいにち</div>
+    <div class="romaji">Mainichi</div>
+    <div class="english translation-hidden">every day</div>
+  </div>
+
+  <!-- Other Vocabulary -->
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ばんごう')">🔊</span>
+    <div class="japanese">ばんごう</div>
+    <div class="romaji">Bangō</div>
+    <div class="english translation-hidden">number</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('なんばん')">🔊</span>
+    <div class="japanese">なんばん</div>
+    <div class="romaji">Nan-ban</div>
+    <div class="english translation-hidden">what number</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('から')">🔊</span>
+    <div class="japanese">から</div>
+    <div class="romaji">-kara</div>
+    <div class="english translation-hidden">from–</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('まで')">🔊</span>
+    <div class="japanese">まで</div>
+    <div class="romaji">-made</div>
+    <div class="english translation-hidden">up to–, until–</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('と')">🔊</span>
+    <div class="japanese">と</div>
+    <div class="romaji">-to</div>
+    <div class="english translation-hidden">and (used to connect)</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('そちら')">🔊</span>
+    <div class="japanese">そちら</div>
+    <div class="romaji">Sochira</div>
+    <div class="english translation-hidden">your place, that place near you</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('たいへんですね')">🔊</span>
+    <div class="japanese">たいへんですね</div>
+    <div class="romaji">Taihen desu ne</div>
+    <div class="english translation-hidden">that’s tough, isn’t it? (used when expressing sympathy)</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ええと')">🔊</span>
+    <div class="japanese">ええと</div>
+    <div class="romaji">Ēto</div>
+    <div class="english translation-hidden">well, let me see...</div>
+  </div>
+</div>
+     <h3 class="subsection-title">Days of the Week</h3>
+<div class="word-grid">
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('げつようび')">🔊</span>
+    <div class="japanese">げつようび</div>
+    <div class="romaji">Getsu-yōbi</div>
+    <div class="english translation-hidden">Monday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('かようび')">🔊</span>
+    <div class="japanese">かようび</div>
+    <div class="romaji">Ka-yōbi</div>
+    <div class="english translation-hidden">Tuesday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('すいようび')">🔊</span>
+    <div class="japanese">すいようび</div>
+    <div class="romaji">Sui-yōbi</div>
+    <div class="english translation-hidden">Wednesday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('もくようび')">🔊</span>
+    <div class="japanese">もくようび</div>
+    <div class="romaji">Moku-yōbi</div>
+    <div class="english translation-hidden">Thursday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('きんようび')">🔊</span>
+    <div class="japanese">きんようび</div>
+    <div class="romaji">Kin-yōbi</div>
+    <div class="english translation-hidden">Friday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('どようび')">🔊</span>
+    <div class="japanese">どようび</div>
+    <div class="romaji">Do-yōbi</div>
+    <div class="english translation-hidden">Saturday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('にちようび')">🔊</span>
+    <div class="japanese">にちようび</div>
+    <div class="romaji">Nichi-yōbi</div>
+    <div class="english translation-hidden">Sunday</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('なんようび')">🔊</span>
+    <div class="japanese">なんようび</div>
+    <div class="romaji">Nan-yōbi</div>
+    <div class="english translation-hidden">what day of the week</div>
+  </div>
+</div>
+
+<h3 class="subsection-title">Loan Words</h3>
+<div class="word-grid">
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ニューヨーク')">🔊</span>
+    <div class="japanese">ニューヨーク</div>
+    <div class="romaji">Nyūyōku</div>
+    <div class="english translation-hidden">New York</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ペキン')">🔊</span>
+    <div class="japanese">ペキン</div>
+    <div class="romaji">Pekin</div>
+    <div class="english translation-hidden">Beijing</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ロンドン')">🔊</span>
+    <div class="japanese">ロンドン</div>
+    <div class="romaji">Rondon</div>
+    <div class="english translation-hidden">London</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('バンコク')">🔊</span>
+    <div class="japanese">バンコク</div>
+    <div class="romaji">Bankoku</div>
+    <div class="english translation-hidden">Bangkok</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('ロサンゼルス')">🔊</span>
+    <div class="japanese">ロサンゼルス</div>
+    <div class="romaji">Rosanzerusu</div>
+    <div class="english translation-hidden">Los Angeles</div>
+  </div>
+
+  <div class="word-card" onclick="toggleCard(this)">
+    <span class="speaker-icon" onclick="event.stopPropagation(); speakWord('デパート')">🔊</span>
+    <div class="japanese">デパート</div>
+    <div class="romaji">Depāto</div>
+    <div class="english translation-hidden">department store</div>
+  </div>
+</div>
+<h3 class="subsection-title">Kaiwa (Conversation)</h3>
+<div class="conversation-box">
+  <div class="conversation-line">
+    <div class="speaker">Person A:</div>
+    <p>104 – information, directory assistance</p>
+    <p><span class="answer-romaji">Hyaku yon – information, directory assistance</span></p>
+  </div>
+  <div class="conversation-line">
+    <div class="speaker">Person A:</div>
+    <p>Onegai-shimasu</p>
+    <p><span class="answer-romaji">Onegai-shimasu – Please (asking for a favour)</span></p>
+  </div>
+  <div class="conversation-line">
+    <div class="speaker">Shop Assistant:</div>
+    <p>Kashikomarimashita</p>
+    <p><span class="answer-romaji">Kashikomarimashita – Certainly (Sir/Madam)</span></p>
+  </div>
+  <div class="conversation-line">
+    <div class="speaker">Person A:</div>
+    <p>o-toiawase no bangō</p>
+    <p><span class="answer-romaji">o-toiawase no bangō – the number being inquired about</span></p>
+  </div>
+  <div class="conversation-line">
+    <div class="speaker">Shop Assistant:</div>
+    <p>[Dōmo] arigatō</p>
+    <p><span class="answer-romaji">[Dōmo] arigatō – Thank you very much</span></p>
+  </div>
+  <div class="conversation-line">
+    <div class="speaker">Person A:</div>
+    <p>Places: ABC-Bijutsukan, Toshokan, ABC-Ginkō</p>
+    <p><span class="answer-romaji">ABC-Bijutsukan (ABC Art Museum), Toshokan (Library), ABC-Ginkō (ABC Bank)</span></p>
+  </div>
+</div>
+
+    <h3 class="subsection-title">How to Write an Address</h3>
+
+<div class="grammar-box">
+  <p><strong>Address Example:</strong></p>
+  <div class="grammar-example">
+    <p>〒658-0063</p>
+    <p>Hyōgo-ken Kōbe-shi Chūō-ku Sannomiya 1-23</p>
+    <p>Kōbe-haitsu 405-gō</p>
+    <p><strong>Labels:</strong> postal zip code, city, ward, town, district, building name, apartment number.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>Grammar Explanation: Ima-ji-fun/pun desu</strong> — To express time, use -ji (o’clock) and -fun/-pun (minutes). <br>-fun is used after 2, 5, 7, 9; -pun is used after 1, 3, 4, 6, 8, 10. 1, 6, 8, 10 are read ippun, roppun, happun, juppun.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('いまなんじですか')">Ima nan-ji desu ka.</span> → What time is it now?</p>
+    <p><span class="clickable-jp" onclick="speakWord('はちじじゅっぷんです')">Hachi-ji juppun desu.</span> → It’s eight ten.</p>
+    <p><span class="clickable-jp" onclick="speakWord('にゅうよくはいまなんじですか')">Nyūyōku wa ima nan-ji desu ka.</span> → In New York, what time is it now?</p>
+    <p><span class="clickable-jp" onclick="speakWord('ごぜんごじです')">Gozen go-ji desu.</span> → It’s 5 a.m.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>V–masu</strong> — A verb with masu works as a predicate and makes the sentence polite.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('わたしはまいにちべんきょうします')">Watashi wa mainichi benkyō-shimasu.</span> → I study every day.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>V–masu / V–masen / V–mashita / V–masendeshita</strong> — Used to express habitual, future, or past actions.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('まいあさろくじにおきます')">Maiasa roku-ji ni okimasu.</span> → I wake up at six every morning.</p>
+    <p><span class="clickable-jp" onclick="speakWord('きのうべんきょうしましたか')">Kinō benkyō-shimashita ka?</span> → Did you study yesterday?</p>
+    <p><span class="clickable-jp" onclick="speakWord('はいべんきょうしました')">Hai, benkyō-shimashita.</span> → Yes, I did.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>N(time) ni V</strong> — When a verb denotes a momentary action, ni marks the time.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('ごじはんにおきます')">Go-ji han ni okimasu.</span> → I get up at five thirty.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>N1 kara N2 made</strong> — kara = from; made = until.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('くじからごじまではたらきます')">Ku-ji kara go-ji made hatarakimasu.</span> → I work from nine to five.</p>
+    <p><span class="clickable-jp" onclick="speakWord('おおさかからとうきょうまでさんじかんかかります')">Ōsaka kara Tōkyō made san-jikan kakarimasu.</span> → It takes three hours from Osaka to Tokyo.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>N1 to N2</strong> — Connects two nouns in coordinate relation.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('ぎんこうのやすみはどようびとにちようびです')">Ginkō no yasumi wa doyōbi to nichiyōbi desu.</span> → The bank is closed on Saturday and Sunday.</p>
+  </div>
+</div>
+
+<div class="grammar-box">
+  <p><strong>Sentence Ending: ne</strong> — Ne adds feeling, sympathy, or agreement.</p>
+  <div class="grammar-example">
+    <p><span class="clickable-jp" onclick="speakWord('まいにちじゅうじまでべんきょうしますたいへんですね')">Mainichi jū-ji made benkyō-shimasu. Taihen desu ne.</span> → I study until 10 p.m. That must be hard.</p>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ACTIVITY 4 -->
+<div id="translation9" class="content-section">
+  <h2 class="section-title">Activity 4</h2>
+
+  <h3 class="subsection-title">Exercise A: Sentences</h3>
+  <div class="conversation-box">
+    <div class="conversation-line"><div class="speaker">1.</div><p>It is four o’clock now.</p><p><span class="answer-romaji">Ima yo-ji desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">2.</div><p>I work from nine to five.</p><p><span class="answer-romaji">Watashi wa ku-ji kara go-ji made hataraiteimasu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">3.</div><p>I get up at six in the morning.</p><p><span class="answer-romaji">Watashi wa asa roku-ji ni okimasu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">4.</div><p>I studied last night.</p><p><span class="answer-romaji">Kinou no yoru benkyou shimashita.</span></p></div>
+  </div>
+
+  <h3 class="subsection-title">Example Sentences</h3>
+  <div class="conversation-box">
+    <div class="conversation-line"><div class="speaker">1.</div><p>What time is it? → It is ten past two.</p><p><span class="answer-romaji">Ima nan-ji desu ka? → Ni-ji juu-pun desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">2.</div><p>From what time is it now in New York? → It is ten past twelve at night.</p><p><span class="answer-romaji">Nyūyōku wa ima nan-ji desu ka? → Yoru juu-ni-ji juu-pun desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">3.</div><p>What time do you go to bed every night? → I go to bed at nine o’clock.</p><p><span class="answer-romaji">Anata wa maiban nan-ji ni nemasu ka? → Ku-ji ni nemasu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">4.</div><p>Do you work on Saturdays? → No, I don’t.</p><p><span class="answer-romaji">Doyōbi ni hataraiteimasu ka? → Iie, hataraiteimasen.</span></p></div>
+    <div class="conversation-line"><div class="speaker">5.</div><p>Did you study yesterday? → No, I didn’t.</p><p><span class="answer-romaji">Kinō benkyou shimashita ka? → Iie, shimasen deshita.</span></p></div>
+    <div class="conversation-line"><div class="speaker">6.</div><p>What is your telephone number? → It is 045-5789.</p><p><span class="answer-romaji">Anata no denwa bangō wa nan desu ka? → 045-5789 desu.</span></p></div>
+  </div>
+
+  <h3 class="subsection-title">Exercise B: Conversation</h3>
+  <div class="conversation-box">
+    <div class="conversation-line"><div class="speaker">104:</div><p>Hello, this is Ishida of the 104 Service.</p><p><span class="answer-romaji">Moshi-moshi, 104 sābisu no Ishida desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Naraya:</div><p>Could you tell me the phone number of the ABC Art Museum, please?</p><p><span class="answer-romaji">ABC Āto Myūjiamu no denwa bangō o oshiete kudasai.</span></p></div>
+    <div class="conversation-line"><div class="speaker">104:</div><p>The ABC Art Museum? Certainly.</p><p><span class="answer-romaji">ABC Āto Myūjiamu desu ka? Mochiron desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Record:</div><p>The number is 0797-38-5432.</p><p><span class="answer-romaji">Bangō wa 0797-38-5432 desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Staff:</div><p>Hello, ABC Art Museum.</p><p><span class="answer-romaji">Moshi-moshi, ABC Āto Myūjiamu desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Naraya:</div><p>Excuse me. What are your opening hours?</p><p><span class="answer-romaji">Sumimasen. Hiruma no kaijō jikan wa nan-ji kara nan-ji made desu ka?</span></p></div>
+    <div class="conversation-line"><div class="speaker">Staff:</div><p>We are open from nine to four.</p><p><span class="answer-romaji">Ku-ji kara yo-ji made desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Naraya:</div><p>Which day are you closed?</p><p><span class="answer-romaji">Heijitsu wa yasumi desu ka?</span></p></div>
+    <div class="conversation-line"><div class="speaker">Staff:</div><p>We are closed on Mondays.</p><p><span class="answer-romaji">Getsuyōbi wa yasumi desu.</span></p></div>
+    <div class="conversation-line"><div class="speaker">Naraya:</div><p>Thank you very much.</p><p><span class="answer-romaji">Dōmo arigatō gozaimasu.</span></p></div>
+  </div>
+</div>
+    <script>
+    // Accept the clicked tab button (buttonEl) and the section id
+    function showSection(buttonEl, sectionId) {
+      const sections = document.querySelectorAll('.content-section');
+      sections.forEach(s => s.classList.remove('active'));
+      const tabs = document.querySelectorAll('.nav-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.add('active');
+
+      // add active class to clicked tab button
+      if (buttonEl && buttonEl.classList) buttonEl.classList.add('active');
+    }
+
+    function speakWord(text) {
+      if (!('speechSynthesis' in window)) { alert('Sorry, your browser does not support text-to-speech.'); return; }
+      window.speechSynthesis.cancel();
+      const synth = window.speechSynthesis;
+      const speak = () => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = 1;
+        const voice = synth.getVoices().find(v => v.lang && v.lang.includes('ja'));
+        if (voice) u.voice = voice;
+        synth.speak(u);
+      };
+      if (synth.getVoices().length === 0) synth.onvoiceschanged = speak; else speak();
+    }
+
+    function toggleCard(card) { card.classList.toggle('active'); }
+  </script>
+</body>
+</html>

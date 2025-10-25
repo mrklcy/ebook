@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: Adjectives & Descriptions - Interactive Japanese Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: #f8f9fa;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content-section {
+            display: none;
+            padding: 40px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .subsection-title {
+            font-size: 1.5em;
+            color: #764ba2;
+            margin: 30px 0 20px 0;
+            padding-left: 15px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .word-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .word-card.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .word-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .word-card:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .japanese {
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .romaji {
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .english {
+            font-size: 1em;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.5;
+        }
+
+        .speaker-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .translation-hidden {
+            display: none;
+        }
+
+        .word-card.active .translation-hidden {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .clickable-jp {
+            color: #667eea;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .clickable-jp:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .grammar-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .grammar-example {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .conversation-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .conversation-line {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .speaker {
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+            font-size: 1.2em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .word-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tab {
+                font-size: 0.9em;
+                padding: 15px 10px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇯🇵 Lesson 8: Adjectives & Descriptions</h1>
+            <p class="subtitle">Click any word to hear pronunciation • Hover to see Japanese script</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('lesson8')">Lesson 8</button>
+            <button class="nav-tab" onclick="showSection('translation8')">Translation Activity</button>
+        </div>
+
+        <!-- LESSON 8 -->
+        <div id="lesson8" class="content-section active">
+            <h2 class="section-title">Lesson 8: Adjectives & Descriptions</h2>
+
+            <h3 class="subsection-title">Na-Adjectives</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('ハンサム'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ハンサム</div>
+                        <span class="tooltiptext">ハンサム</span>
+                    </div>
+                    <div class="romaji">hansamu [na]</div>
+                    <div class="english translation-hidden">handsome</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('きれい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">きれい</div>
+                        <span class="tooltiptext">きれい</span>
+                    </div>
+                    <div class="romaji">kirei [na]</div>
+                    <div class="english translation-hidden">beautiful, clean</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('しずか'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">しずか</div>
+                        <span class="tooltiptext">しずか</span>
+                    </div>
+                    <div class="romaji">shizuka [na]</div>
+                    <div class="english translation-hidden">quiet</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('にぎやか'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">にぎやか</div>
+                        <span class="tooltiptext">にぎやか</span>
+                    </div>
+                    <div class="romaji">nigiyaka [na]</div>
+                    <div class="english translation-hidden">lively</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ゆうめい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ゆうめい</div>
+                        <span class="tooltiptext">ゆうめい</span>
+                    </div>
+                    <div class="romaji">yūmei [na]</div>
+                    <div class="english translation-hidden">famous</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('しんせつ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">しんせつ</div>
+                        <span class="tooltiptext">しんせつ</span>
+                    </div>
+                    <div class="romaji">shinsetsu [na]</div>
+                    <div class="english translation-hidden">kind</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('げんき'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">げんき</div>
+                        <span class="tooltiptext">げんき</span>
+                    </div>
+                    <div class="romaji">genki [na]</div>
+                    <div class="english translation-hidden">healthy, sound, cheerful</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ひま'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ひま</div>
+                        <span class="tooltiptext">ひま</span>
+                    </div>
+                    <div class="romaji">hima [na]</div>
+                    <div class="english translation-hidden">free (time)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('べんり'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">べんり</div>
+                        <span class="tooltiptext">べんり</span>
+                    </div>
+                    <div class="romaji">benri [na]</div>
+                    <div class="english translation-hidden">convenient</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('すてき'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">すてき</div>
+                        <span class="tooltiptext">すてき</span>
+                    </div>
+                    <div class="romaji">suteki [na]</div>
+                    <div class="english translation-hidden">fine, nice, wonderful</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">I-Adjectives</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('おおきい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">おおきい</div>
+                        <span class="tooltiptext">おおきい</span>
+                    </div>
+                    <div class="romaji">ōkii</div>
+                    <div class="english translation-hidden">big, large</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ちいさい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ちいさい</div>
+                        <span class="tooltiptext">ちいさい</span>
+                    </div>
+                    <div class="romaji">chiisai</div>
+                    <div class="english translation-hidden">small, little</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あたらしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あたらしい</div>
+                        <span class="tooltiptext">あたらしい</span>
+                    </div>
+                    <div class="romaji">atarashii</div>
+                    <div class="english translation-hidden">new</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ふるい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ふるい</div>
+                        <span class="tooltiptext">ふるい</span>
+                    </div>
+                    <div class="romaji">furui</div>
+                    <div class="english translation-hidden">old (not of age)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('いい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">いい</div>
+                        <span class="tooltiptext">いい</span>
+                    </div>
+                    <div class="romaji">ii (yoi)</div>
+                    <div class="english translation-hidden">good</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('わるい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">わるい</div>
+                        <span class="tooltiptext">わるい</span>
+                    </div>
+                    <div class="romaji">warui</div>
+                    <div class="english translation-hidden">bad</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あつい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あつい</div>
+                        <span class="tooltiptext">あつい</span>
+                    </div>
+                    <div class="romaji">atsui</div>
+                    <div class="english translation-hidden">hot</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('さむい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">さむい</div>
+                        <span class="tooltiptext">さむい</span>
+                    </div>
+                    <div class="romaji">samui</div>
+                    <div class="english translation-hidden">cold (referring to temperature)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('つめたい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">つめたい</div>
+                        <span class="tooltiptext">つめたい</span>
+                    </div>
+                    <div class="romaji">tsumetai</div>
+                    <div class="english translation-hidden">cold (referring to touch)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('むずかしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">むずかしい</div>
+                        <span class="tooltiptext">むずかしい</span>
+                    </div>
+                    <div class="romaji">muzukashii</div>
+                    <div class="english translation-hidden">difficult</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('やさしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">やさしい</div>
+                        <span class="tooltiptext">やさしい</span>
+                    </div>
+                    <div class="romaji">yasashii</div>
+                    <div class="english translation-hidden">easy</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('たかい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">たかい</div>
+                        <span class="tooltiptext">たかい</span>
+                    </div>
+                    <div class="romaji">takai</div>
+                    <div class="english translation-hidden">expensive, tall, high</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('やすい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">やすい</div>
+                        <span class="tooltiptext">やすい</span>
+                    </div>
+                    <div class="romaji">yasui</div>
+                    <div class="english translation-hidden">cheap</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ひくい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ひくい</div>
+                        <span class="tooltiptext">ひくい</span>
+                    </div>
+                    <div class="romaji">hikui</div>
+                    <div class="english translation-hidden">low</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('おもしろい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">おもしろい</div>
+                        <span class="tooltiptext">おもしろい</span>
+                    </div>
+                    <div class="romaji">omoshiroi</div>
+                    <div class="english translation-hidden">interesting</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('おいしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">おいしい</div>
+                        <span class="tooltiptext">おいしい</span>
+                    </div>
+                    <div class="romaji">oishii</div>
+                    <div class="english translation-hidden">delicious, tasty</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('いそがしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">いそがしい</div>
+                        <span class="tooltiptext">いそがしい</span>
+                    </div>
+                    <div class="romaji">isogashii</div>
+                    <div class="english translation-hidden">busy</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('たのしい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">たのしい</div>
+                        <span class="tooltiptext">たのしい</span>
+                    </div>
+                    <div class="romaji">tanoshii</div>
+                    <div class="english translation-hidden">enjoyable</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Colors</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('しろい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">しろい</div>
+                        <span class="tooltiptext">しろい</span>
+                    </div>
+                    <div class="romaji">shiroi</div>
+                    <div class="english translation-hidden">white</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('くろい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">くろい</div>
+                        <span class="tooltiptext">くろい</span>
+                    </div>
+                    <div class="romaji">kuroi</div>
+                    <div class="english translation-hidden">black</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あかい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あかい</div>
+                        <span class="tooltiptext">あかい</span>
+                    </div>
+                    <div class="romaji">akai</div>
+                    <div class="english translation-hidden">red</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あおい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あおい</div>
+                        <span class="tooltiptext">あおい</span>
+                    </div>
+                    <div class="romaji">aoi</div>
+                    <div class="english translation-hidden">blue</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('きいろい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">きいろい</div>
+                        <span class="tooltiptext">きいろい</span>
+                    </div>
+                    <div class="romaji">kiiroi</div>
+                    <div class="english translation-hidden">yellow</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ちゃいろい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ちゃいろい</div>
+                        <span class="tooltiptext">ちゃいろい</span>
+                    </div>
+                    <div class="romaji">chairoi</div>
+                    <div class="english translation-hidden">brown</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Taste Words</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('あまい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あまい</div>
+                        <span class="tooltiptext">あまい</span>
+                    </div>
+                    <div class="romaji">amai</div>
+                    <div class="english translation-hidden">sweet</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('からい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">からい</div>
+                        <span class="tooltiptext">からい</span>
+                    </div>
+                    <div class="romaji">karai</div>
+                    <div class="english translation-hidden">hot, spicy</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('にがい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">にがい</div>
+                        <span class="tooltiptext">にがい</span>
+                    </div>
+                    <div class="romaji">nigai</div>
+                    <div class="english translation-hidden">bitter</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('しおからい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">しおからい</div>
+                        <span class="tooltiptext">しおからい</span>
+                    </div>
+                    <div class="romaji">shiokarai</div>
+                    <div class="english translation-hidden">salty</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('すっぱい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">すっぱい</div>
+                        <span class="tooltiptext">すっぱい</span>
+                    </div>
+                    <div class="romaji">suppai</div>
+                    <div class="english translation-hidden">sour</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('こい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">こい</div>
+                        <span class="tooltiptext">こい</span>
+                    </div>
+                    <div class="romaji">koi</div>
+                    <div class="english translation-hidden">thick, strong</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('うすい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">うすい</div>
+                        <span class="tooltiptext">うすい</span>
+                    </div>
+                    <div class="romaji">usui</div>
+                    <div class="english translation-hidden">thin, weak</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Other Nouns</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('さくら'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">さくら</div>
+                        <span class="tooltiptext">さくら</span>
+                    </div>
+                    <div class="romaji">sakura</div>
+                    <div class="english translation-hidden">cherry (blossom)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('やま'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">やま</div>
+                        <span class="tooltiptext">やま</span>
+                    </div>
+                    <div class="romaji">yama</div>
+                    <div class="english translation-hidden">mountain</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('まち'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">まち</div>
+                        <span class="tooltiptext">まち</span>
+                    </div>
+                    <div class="romaji">machi</div>
+                    <div class="english translation-hidden">town, city</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('たべもの'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">たべもの</div>
+                        <span class="tooltiptext">たべもの</span>
+                    </div>
+                    <div class="romaji">tabemono</div>
+                    <div class="english translation-hidden">food</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('くるま'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">くるま</div>
+                        <span class="tooltiptext">くるま</span>
+                    </div>
+                    <div class="romaji">kuruma</div>
+                    <div class="english translation-hidden">car, vehicle</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('ところ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">ところ</div>
+                        <span class="tooltiptext">ところ</span>
+                    </div>
+                    <div class="romaji">tokoro</div>
+                    <div class="english translation-hidden">place</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('りょう'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">りょう</div>
+                        <span class="tooltiptext">りょう</span>
+                    </div>
+                    <div class="romaji">ryō</div>
+                    <div class="english translation-hidden">dormitory</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('べんきょう'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">べんきょう</div>
+                        <span class="tooltiptext">べんきょう</span>
+                    </div>
+                    <div class="romaji">benkyō</div>
+                    <div class="english translation-hidden">study</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('せいかつ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">せいかつ</div>
+                        <span class="tooltiptext">せいかつ</span>
+                    </div>
+                    <div class="romaji">seikatsu</div>
+                    <div class="english translation-hidden">life</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('おしごと'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">おしごと</div>
+                        <span class="tooltiptext">おしごと</span>
+                    </div>
+                    <div class="romaji">[o] shigoto</div>
+                    <div class="english translation-hidden">work, business</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Question Words & Adverbs</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('どう'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">どう</div>
+                        <span class="tooltiptext">どう</span>
+                    </div>
+                    <div class="romaji">dō</div>
+                    <div class="english translation-hidden">how</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('どんな'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">どんな</div>
+                        <span class="tooltiptext">どんな</span>
+                    </div>
+                    <div class="romaji">donna~</div>
+                    <div class="english translation-hidden">what kind of~</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('どれ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">どれ</div>
+                        <span class="tooltiptext">どれ</span>
+                    </div>
+                    <div class="romaji">dore</div>
+                    <div class="english translation-hidden">which one</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('とても'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">とても</div>
+                        <span class="tooltiptext">とても</span>
+                    </div>
+                    <div class="romaji">totemo</div>
+                    <div class="english translation-hidden">very</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('たいへん'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">たいへん</div>
+                        <span class="tooltiptext">たいへん</span>
+                    </div>
+                    <div class="romaji">taihen</div>
+                    <div class="english translation-hidden">very (to exaggerate feelings)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あまり'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あまり</div>
+                        <span class="tooltiptext">あまり</span>
+                    </div>
+                    <div class="romaji">amari</div>
+                    <div class="english translation-hidden">not so (used with negatives)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('が'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">が</div>
+                        <span class="tooltiptext">が</span>
+                    </div>
+                    <div class="romaji">ga</div>
+                    <div class="english translation-hidden">but ~</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Grammar: Adjective Types</h3>
+            <div class="grammar-box">
+                <p><strong>Na-adjectives:</strong> Use <span class="tooltip clickable-jp" onclick="speakWord('な')">な<span class="tooltiptext">な</span></span> before nouns</p>
+                <div class="grammar-example">
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('しずかなへや')">Shizuka na heya<span class="tooltiptext">しずかなへや</span></span> → A quiet room</p>
+                </div>
+                <p><strong>I-adjectives:</strong> End with <span class="tooltip clickable-jp" onclick="speakWord('い')">い<span class="tooltiptext">い</span></span> and directly modify nouns</p>
+                <div class="grammar-example">
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('おおきいいえ')">Ōkii ie<span class="tooltiptext">おおきいいえ</span></span> → A big house</p>
+                </div>
+                <p><strong>Negative forms:</strong></p>
+                <div class="grammar-example">
+                    <p>Na-adj: <span class="tooltip clickable-jp" onclick="speakWord('しずかじゃありません')">Shizuka ja arimasen<span class="tooltiptext">しずかじゃありません</span></span> → Not quiet</p>
+                    <p>I-adj: <span class="tooltip clickable-jp" onclick="speakWord('おおきくないです')">Ōkikunai desu<span class="tooltiptext">おおきくないです</span></span> → Not big</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSLATION ACTIVITY 8 -->
+        <div id="translation8" class="content-section">
+            <h2 class="section-title">Translation Activity 8</h2>
+
+            <h3 class="subsection-title">Example Sentences</h3>
+            <div class="conversation-box">
+                <div class="conversation-line">
+                    <div class="speaker">1. Cherry blossoms are beautiful.</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('さくらはきれいです')">Sakura wa kirei desu.<span class="tooltiptext">さくらはきれいです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">2. Mt. Fuji is high.</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('ふじさんはたかいです')">Fuji-san wa takai desu.<span class="tooltiptext">ふじさんはたかいです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">3. Is Osaka lively?</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('おおさかはにぎやかですか')">Ōsaka wa nigiyaka desu ka?<span class="tooltiptext">おおさかはにぎやかですか</span></span></p>
+                    <p>→ Yes, it is. <span class="tooltip clickable-jp" onclick="speakWord('はい、にぎやかです')">Hai, nigiyaka desu.<span class="tooltiptext">はい、にぎやかです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">4. Is it cold in Beijing now?</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('ペキンはいまさむいですか')">Pekin wa ima samui desu ka?<span class="tooltiptext">ペキンはいまさむいですか</span></span></p>
+                    <p>→ Yes, it is very cold. <span class="tooltip clickable-jp" onclick="speakWord('はい、とてもさむいです')">Hai, totemo samui desu.<span class="tooltiptext">はい、とてもさむいです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">5. Is it cold in Shanghai too?</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('シャンハイもさむいですか')">Shanhai mo samui desu ka?<span class="tooltiptext">シャンハイもさむいですか</span></span></p>
+                    <p>→ No, it is not so cold. <span class="tooltip clickable-jp" onclick="speakWord('いいえ、あまりさむくないです')">Iie, amari samukunai desu.<span class="tooltiptext">いいえ、あまりさむくないです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">6. How do you like the town?</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('まちはどうですか')">Machi wa dō desu ka?<span class="tooltiptext">まちはどうですか</span></span></p>
+                    <p>→ It is clean and convenient. <span class="tooltip clickable-jp" onclick="speakWord('きれいでべんりです')">Kirei de benri desu.<span class="tooltiptext">きれいでべんりです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">7. Which is Mr. Ibarra's umbrella?</div>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('イバラさんのかさはどれですか')">Ibarra-san no kasa wa dore desu ka?<span class="tooltiptext">イバラさんのかさはどれですか</span></span></p>
+                    <p>→ That black one is. <span class="tooltip clickable-jp" onclick="speakWord('あのくろいかさです')">Ano kuroi kasa desu.<span class="tooltiptext">あのくろいかさです</span></span></p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Conversation: "It's almost time to leave"</h3>
+            <div class="conversation-box">
+                <div class="conversation-line">
+                    <div class="speaker">Rai Tanabi:</div>
+                    <p>Have you got accustomed to living in Japan, Naraya?</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('ナラヤさん、にほんのせいかつになれましたか')">Naraya-san, Nihon no seikatsu ni naremashita ka?<span class="tooltiptext">ナラヤさん、にほんのせいかつになれましたか</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Naraya Ramos:</div>
+                    <p>Yes, I am. I enjoy it every day.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('はい、まいにちたのしいです')">Hai, mainichi tanoshii desu.<span class="tooltiptext">はい、まいにちたのしいです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Rai Tanabi:</div>
+                    <p>Really? Mr. Ibarra, how is your work?</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('そうですか。イバラさん、おしごとはどうですか')">Sō desu ka. Ibarra-san, o-shigoto wa dō desu ka?<span class="tooltiptext">そうですか。イバラさん、おしごとはどうですか</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Dante Ibarra:</div>
+                    <p>Well, it's busy, but interesting.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('そうですね、いそがしいですが、おもしろいです')">Sō desu ne, isogashii desu ga, omoshiroi desu.<span class="tooltiptext">そうですね、いそがしいですが、おもしろいです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Ichiro Tanabi:</div>
+                    <p>Would you like another cup of coffee?</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('コーヒーをもういっぱいいかがですか')">Kōhii o mō ippai ikaga desu ka?<span class="tooltiptext">コーヒーをもういっぱいいかがですか</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Naraya Ramos:</div>
+                    <p>No, thank you.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('いいえ、けっこうです')">Iie, kekkō desu.<span class="tooltiptext">いいえ、けっこうです</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Dante Ibarra:</div>
+                    <p>Oh, it's 8 o'clock now. We must be going.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('あ、もうはちじです。そろそろしつれいします')">A, mō hachi-ji desu. Sorosoro shitsurei shimasu.<span class="tooltiptext">あ、もうはちじです。そろそろしつれいします</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Rai Tanabi:</div>
+                    <p>Oh, is it?</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('そうですか')">Sō desu ka?<span class="tooltiptext">そうですか</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Naraya Ramos:</div>
+                    <p>Thank you for everything today.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('きょうはありがとうございました')">Kyō wa arigatō gozaimashita.<span class="tooltiptext">きょうはありがとうございました</span></span></p>
+                </div>
+
+                <div class="conversation-line">
+                    <div class="speaker">Ichiro Tanabi:</div>
+                    <p>Our pleasure. Please come again.</p>
+                    <p><span class="tooltip clickable-jp" onclick="speakWord('いいえ、またいらっしゃってください')">Iie, mata irasshatte kudasai.<span class="tooltiptext">いいえ、またいらっしゃってください</span></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+
+        function toggleCard(card) {
+            card.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

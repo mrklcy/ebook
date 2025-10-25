@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Japanese Learning - Lesson 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: #f8f9fa;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content-section {
+            display: none;
+            padding: 40px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .subsection-title {
+            font-size: 1.5em;
+            color: #764ba2;
+            margin: 30px 0 20px 0;
+            padding-left: 15px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .word-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: visible;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .word-card.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .word-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .word-card:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .japanese {
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .romaji {
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .english {
+            font-size: 1em;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.5;
+        }
+
+        .speaker-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .translation-hidden {
+            display: none;
+        }
+
+        .word-card.active .translation-hidden {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .clickable-jp {
+            color: #667eea;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .clickable-jp:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .grammar-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .grammar-example {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .conversation-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .conversation-line {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .speaker {
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 8px;
+        }
+
+        .answer-romaji {
+            color: #1e90ff;
+            font-weight: 600;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 999;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+            font-size: 0.95em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .word-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tab {
+                font-size: 0.9em;
+                padding: 15px 10px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+<header>
+<h1>🇯🇵 Interactive Japanese Learning — Lesson 2</h1>
+<p class="subtitle">Click any Japanese to hear pronunciation</p>
+</header>
+
+
+<div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('lesson2')">Lesson 2</button>
+            <button class="nav-tab" onclick="showSection('translation2')">Translation Activity 2</button>
+        </div>
+
+        <!-- LESSON 2 -->
+        <div id="lesson2" class="content-section active">
+            <h2 class="section-title">Lesson 2: Demonstratives, Noun Modifiers, and Everyday Objects</h2>
+
+            <h3 class="subsection-title">Demonstratives (Things)</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('これ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">これ</div>
+                        <span class="tooltiptext">this (thing here)</span>
+                    </div>
+                    <div class="romaji">Kore</div>
+                    <div class="english translation-hidden">this (thing here)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('それ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">それ</div>
+                        <span class="tooltiptext">that (thing near you)</span>
+                    </div>
+                    <div class="romaji">Sore</div>
+                    <div class="english translation-hidden">that (thing near you)</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あれ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あれ</div>
+                        <span class="tooltiptext">that (thing over there)</span>
+                    </div>
+                    <div class="romaji">Are</div>
+                    <div class="english translation-hidden">that (thing over there)</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Demonstrative Modifiers</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('この'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">この〜</div>
+                        <span class="tooltiptext">this ~</span>
+                    </div>
+                    <div class="romaji">Kono ~</div>
+                    <div class="english translation-hidden">this ~, this ~ here</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('その'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">その〜</div>
+                        <span class="tooltiptext">that ~ (near you)</span>
+                    </div>
+                    <div class="romaji">Sono ~</div>
+                    <div class="english translation-hidden">that ~, that ~ near you</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あの'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あの〜</div>
+                        <span class="tooltiptext">that ~ (over there)</span>
+                    </div>
+                    <div class="romaji">Ano ~</div>
+                    <div class="english translation-hidden">that ~, that ~ over there</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Pronouns & Possessives</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('わたし'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">わたし</div>
+                        <span class="tooltiptext">わたし</span>
+                    </div>
+                    <div class="romaji">Watashi</div>
+                    <div class="english translation-hidden">me</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('わたしたち'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">わたしたち</div>
+                        <span class="tooltiptext">わたしたち</span>
+                    </div>
+                    <div class="romaji">Watashitachi</div>
+                    <div class="english translation-hidden">we</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あなた'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あなた</div>
+                        <span class="tooltiptext">あなた</span>
+                    </div>
+                    <div class="romaji">Anata</div>
+                    <div class="english translation-hidden">you</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('あなたの'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">あなたの</div>
+                        <span class="tooltiptext">あなたの</span>
+                    </div>
+                    <div class="romaji">Anata no</div>
+                    <div class="english translation-hidden">your / yours</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('かれ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">かれ</div>
+                        <span class="tooltiptext">かれ</span>
+                    </div>
+                    <div class="romaji">Kare</div>
+                    <div class="english translation-hidden">he</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('かれの'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">かれの</div>
+                        <span class="tooltiptext">かれの</span>
+                    </div>
+                    <div class="romaji">Kare no</div>
+                    <div class="english translation-hidden">his</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('かのじょ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">かのじょ</div>
+                        <span class="tooltiptext">かのじょ</span>
+                    </div>
+                    <div class="romaji">Kanojo</div>
+                    <div class="english translation-hidden">she</div>
+                </div>
+
+                <div class="word-card" onclick="speakWord('かのじょの'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip">
+                        <div class="japanese">かのじょの</div>
+                        <span class="tooltiptext">かのじょの</span>
+                    </div>
+                    <div class="romaji">Kanojo no</div>
+                    <div class="english translation-hidden">her</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Objects & Everyday Items</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('ほん'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">ほん</div><span class="tooltiptext">book</span></div>
+                    <div class="romaji">Hon</div>
+                    <div class="english translation-hidden">book</div>
+                </div>
+                <div class="word-card" onclick="speakWord('じしょ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">じしょ</div><span class="tooltiptext">dictionary</span></div>
+                    <div class="romaji">Jisho</div>
+                    <div class="english translation-hidden">dictionary</div>
+                </div>
+                <div class="word-card" onclick="speakWord('ざっし'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">ざっし</div><span class="tooltiptext">magazine</span></div>
+                    <div class="romaji">Zasshi</div>
+                    <div class="english translation-hidden">magazine</div>
+                </div>
+                <div class="word-card" onclick="speakWord('しんぶん'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">しんぶん</div><span class="tooltiptext">newspaper</span></div>
+                    <div class="romaji">Shinbun</div>
+                    <div class="english translation-hidden">newspaper</div>
+                </div>
+                <div class="word-card" onclick="speakWord('てちょう'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">てちょう</div><span class="tooltiptext">pocket notebook</span></div>
+                    <div class="romaji">Techō</div>
+                    <div class="english translation-hidden">pocket notebook</div>
+                </div>
+                <div class="word-card" onclick="speakWord('めいし'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">めいし</div><span class="tooltiptext">business card</span></div>
+                    <div class="romaji">Meishi</div>
+                    <div class="english translation-hidden">business card</div>
+                </div>
+                <div class="word-card" onclick="speakWord('えんぴつ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">えんぴつ</div><span class="tooltiptext">pencil</span></div>
+                    <div class="romaji">Enpitsu</div>
+                    <div class="english translation-hidden">pencil</div>
+                </div>
+                <div class="word-card" onclick="speakWord('かぎ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">かぎ</div><span class="tooltiptext">key</span></div>
+                    <div class="romaji">Kagi</div>
+                    <div class="english translation-hidden">key</div>
+                </div>
+                <div class="word-card" onclick="speakWord('とけい'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">とけい</div><span class="tooltiptext">watch</span></div>
+                    <div class="romaji">Tokei</div>
+                    <div class="english translation-hidden">watch</div>
+                </div>
+                <div class="word-card" onclick="speakWord('かさ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">かさ</div><span class="tooltiptext">umbrella</span></div>
+                    <div class="romaji">Kasa</div>
+                    <div class="english translation-hidden">umbrella</div>
+                </div>
+                <div class="word-card" onclick="speakWord('かばん'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">かばん</div><span class="tooltiptext">bag/briefcase</span></div>
+                    <div class="romaji">Kaban</div>
+                    <div class="english translation-hidden">bag, briefcase</div>
+                </div>
+                <div class="word-card" onclick="speakWord('じどうしゃ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">じどうしゃ</div><span class="tooltiptext">automobile</span></div>
+                    <div class="romaji">Jidōsha</div>
+                    <div class="english translation-hidden">automobile, car</div>
+                </div>
+                <div class="word-card" onclick="speakWord('くるま'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">くるま</div><span class="tooltiptext">car</span></div>
+                    <div class="romaji">Kuruma</div>
+                    <div class="english translation-hidden">car</div>
+                </div>
+                <div class="word-card" onclick="speakWord('つくえ'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">つくえ</div><span class="tooltiptext">desk</span></div>
+                    <div class="romaji">Tsukue</div>
+                    <div class="english translation-hidden">desk</div>
+                </div>
+                <div class="word-card" onclick="speakWord('いす'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">いす</div><span class="tooltiptext">chair</span></div>
+                    <div class="romaji">Isu</div>
+                    <div class="english translation-hidden">chair</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Languages & Question Words</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('えいご'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">えいご</div><span class="tooltiptext">English language</span></div>
+                    <div class="romaji">Eigo</div>
+                    <div class="english translation-hidden">English language</div>
+                </div>
+                <div class="word-card" onclick="speakWord('にほんご'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">にほんご</div><span class="tooltiptext">Japanese language</span></div>
+                    <div class="romaji">Nihon-go</div>
+                    <div class="english translation-hidden">Japanese language</div>
+                </div>
+                <div class="word-card" onclick="speakWord('〜ご'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">〜ご</div><span class="tooltiptext">language (suffix)</span></div>
+                    <div class="romaji">-go</div>
+                    <div class="english translation-hidden">language (suffix)</div>
+                </div>
+                <div class="word-card" onclick="speakWord('なん／なに'); toggleCard(this)">
+                    <span class="speaker-icon">🔊</span>
+                    <div class="tooltip"><div class="japanese">なん／なに</div><span class="tooltiptext">what</span></div>
+                    <div class="romaji">Nan / Nani</div>
+                    <div class="english translation-hidden">what</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Useful Expressions</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('そう'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">そう</div><span class="tooltiptext">so</span></div><div class="romaji">Sō</div><div class="english translation-hidden">so</div></div>
+                <div class="word-card" onclick="speakWord('ちがいます'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ちがいます</div><span class="tooltiptext">no, it isn't / you are wrong</span></div><div class="romaji">Chigaimasu</div><div class="english translation-hidden">no, it isn't / you are wrong (polite)</div></div>
+                <div class="word-card" onclick="speakWord('ちがう'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ちがう</div><span class="tooltiptext">no (plain)</span></div><div class="romaji">Chigau</div><div class="english translation-hidden">no (plain)</div></div>
+                <div class="word-card" onclick="speakWord('そうですか'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">そうですか</div><span class="tooltiptext">I see / Is that so?</span></div><div class="romaji">Sō desu ka</div><div class="english translation-hidden">I see / Is that so?</div></div>
+                <div class="word-card" onclick="speakWord('あのう'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">あのう</div><span class="tooltiptext">well (hesitation)</span></div><div class="romaji">Anō</div><div class="english translation-hidden">well (hesitation)</div></div>
+                <div class="word-card" onclick="speakWord('ほんのきもちです'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ほんのきもちです</div><span class="tooltiptext">it's a token of gratitude</span></div><div class="romaji">Honno kimochi desu</div><div class="english translation-hidden">it's nothing / a token of gratitude</div></div>
+                <div class="word-card" onclick="speakWord('どうぞ'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">どうぞ</div><span class="tooltiptext">please / here you are</span></div><div class="romaji">Dōzo</div><div class="english translation-hidden">please / here you are</div></div>
+                <div class="word-card" onclick="speakWord('どうも'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">どうも</div><span class="tooltiptext">well, thanks</span></div><div class="romaji">Dōmo</div><div class="english translation-hidden">well, thanks</div></div>
+                <div class="word-card" onclick="speakWord('どうもありがとうございます'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">どうもありがとうございます</div><span class="tooltiptext">thank you very much</span></div><div class="romaji">[Dōmo] arigatō [gozaimasu]</div><div class="english translation-hidden">thank you [very much]</div></div>
+            </div>
+
+            <h3 class="subsection-title">Loan Words</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('ノート'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ノート</div><span class="tooltiptext">notebook</span></div><div class="romaji">Nōto</div><div class="english translation-hidden">notebook</div></div>
+                <div class="word-card" onclick="speakWord('カード'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">カード</div><span class="tooltiptext">card</span></div><div class="romaji">Kādo</div><div class="english translation-hidden">card</div></div>
+                <div class="word-card" onclick="speakWord('テレホンカード'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">テレホンカード</div><span class="tooltiptext">telephone card</span></div><div class="romaji">Terehon-kādo</div><div class="english translation-hidden">telephone card</div></div>
+                <div class="word-card" onclick="speakWord('カセットテープ'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">カセットテープ</div><span class="tooltiptext">cassette tape</span></div><div class="romaji">[Kasetto-] tēpu</div><div class="english translation-hidden">[cassette] tape</div></div>
+                <div class="word-card" onclick="speakWord('ボールペン'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ボールペン</div><span class="tooltiptext">ballpoint pen</span></div><div class="romaji">Bōrupen</div><div class="english translation-hidden">ballpoint pen</div></div>
+                <div class="word-card" onclick="speakWord('シャープペンシル'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">シャープペンシル</div><span class="tooltiptext">mechanical pencil</span></div><div class="romaji">Shāpu-penshiru</div><div class="english translation-hidden">mechanical pencil</div></div>
+                <div class="word-card" onclick="speakWord('テープレコーダー'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">テープレコーダー</div><span class="tooltiptext">tape recorder</span></div><div class="romaji">Tēpu-rekōda</div><div class="english translation-hidden">tape recorder</div></div>
+                <div class="word-card" onclick="speakWord('テレビ'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">テレビ</div><span class="tooltiptext">television</span></div><div class="romaji">Terebi</div><div class="english translation-hidden">television</div></div>
+                <div class="word-card" onclick="speakWord('ラジオ'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">ラジオ</div><span class="tooltiptext">radio</span></div><div class="romaji">Rajio</div><div class="english translation-hidden">radio</div></div>
+                <div class="word-card" onclick="speakWord('カメラ'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">カメラ</div><span class="tooltiptext">camera</span></div><div class="romaji">Kamera</div><div class="english translation-hidden">camera</div></div>
+                <div class="word-card" onclick="speakWord('コンピューター'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">コンピューター</div><span class="tooltiptext">computer</span></div><div class="romaji">Kompyūtā</div><div class="english translation-hidden">computer</div></div>
+                <div class="word-card" onclick="speakWord('チョコレート'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">チョコレート</div><span class="tooltiptext">chocolate</span></div><div class="romaji">Chokorēto</div><div class="english translation-hidden">chocolate</div></div>
+                <div class="word-card" onclick="speakWord('コーヒー'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">コーヒー</div><span class="tooltiptext">coffee</span></div><div class="romaji">Kōhii</div><div class="english translation-hidden">coffee</div></div>
+            </div>
+
+            <h3 class="subsection-title">Kaiwa (Conversation)</h3>
+            <div class="word-grid">
+                <div class="word-card" onclick="speakWord('これからおせわになります'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">これからおせわになります</div><span class="tooltiptext">これからおせわになります</span></div><div class="romaji">Korekara osewa ni narimasu</div><div class="english translation-hidden">I hope for your kind assistance hereafter.</div></div>
+                <div class="word-card" onclick="speakWord('こちらこそよろしく'); toggleCard(this)"><span class="speaker-icon">🔊</span><div class="tooltip"><div class="japanese">こちらこそよろしく</div><span class="tooltiptext">こちらこそよろしく</span></div><div class="romaji">Kochira koso yoroshiku</div><div class="english translation-hidden">I am pleased to meet you. (response)</div></div>
+            </div>
+
+            <h3 class="subsection-title">Information: Situational Greetings</h3>
+            <div class="conversation-box">
+                <div class="conversation-line">
+                    <div class="speaker">Business first meeting</div>
+                    <p>Business cards are exchanged. ("Hajimemashite.")</p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">New neighbors</div>
+                    <p>Introduce yourself and give a small gift (towel, soap, sweets). Say <span class="clickable-jp" onclick="speakWord('Honno kimochi desu')">Honno kimochi desu</span>.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Grammar Explanation</h3>
+            <div class="grammar-box">
+                <p><strong>1. Kore / Sore / Are</strong> — demonstratives that function as nouns. "Kore" near speaker, "Sore" near listener, "Are" far from both.</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Sore wa zasshi desu ka')">Sore wa zasshi desu ka?<span class="tooltiptext"></span></span></p>
+                    <p>→ Is that a magazine?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Kore wa kagi desu')">Kore wa kagi desu.</span></p>
+                    <p>→ This is a key.</p>
+                </div>
+            </div>
+
+            <div class="grammar-box">
+                <p><strong>2. Kono / Sono / Ano + N</strong> — modify nouns. "Kono N" near speaker, "Sono N" near listener, "Ano N" far from both.</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Kono nōto wa watashi no desu')">Kono nōto wa watashi no desu.</span> → This notebook is mine.</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Ano kata wa donata desu ka')">Ano kata wa donata desu ka?</span> → Who is that person?</p>
+                </div>
+            </div>
+
+            <div class="grammar-box">
+                <p><strong>3. Sō desu / Sō ja arimasen</strong> — affirmative/negative responses in noun sentences. "Hai, sō desu." / "Iie, sō ja arimasen."</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Sore wa techō desu ka')">Sore wa techō desu ka?</span> → Is that a pocket notebook?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Hai, sō desu')">Hai, sō desu.</span> / <span class="clickable-jp" onclick="speakWord('Iie, chigaimasu')">Iie, chigaimasu.</span></p>
+                </div>
+            </div>
+
+            <div class="grammar-box">
+                <p><strong>4. S1 ka, S2 ka</strong> — choose between alternatives; answer with the chosen sentence.</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Kore wa zasshi ka shinbun desu ka')">Kore wa zasshi ka shinbun desu ka?</span> → Is this a magazine or a newspaper?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Zasshi desu')">Zasshi desu.</span> → It is a magazine.</p>
+                </div>
+            </div>
+
+            <div class="grammar-box">
+                <p><strong>5. N1 no N2</strong> — N1 explains what N2 is about or who owns N2.</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Kore wa kuruma no zasshi desu')">Kore wa kuruma no zasshi desu.</span> → This is a magazine of cars.</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Kore wa watashi no zasshi desu')">Kore wa watashi no zasshi desu.</span> → This is my magazine.</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Are wa dare no hon desu ka')">Are wa dare no hon desu ka?</span> → Whose book is that?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Kono kasa wa anata no desu ka')">Kono kasa wa anata no desu ka?</span> → Is this umbrella yours?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Iie, watashi no ja arimasen')">Iie, watashi no ja arimasen.</span> → No, it's not mine.</p>
+                </div>
+            </div>
+
+            <div class="grammar-box">
+                <p><strong>6. Sō desu ka</strong> — used to acknowledge new information.</p>
+                <div class="grammar-example">
+                    <p><span class="clickable-jp" onclick="speakWord('Kono kaban wa anata no desu ka')">Kono kaban wa anata no desu ka?</span> → Is this bag yours?</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Iie, chigaimasu. Tanabi-san no desu')">Iie, chigaimasu. Tanabi-san no desu.</span> → No, it's Mr. Tanabi's.</p>
+                    <p><span class="clickable-jp" onclick="speakWord('Sō desu ka')">Sō desu ka.</span> → I see.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSLATION ACTIVITY 2 -->
+        <div id="translation2" class="content-section">
+            <h2 class="section-title">Translation Activity 2</h2>
+
+            <h3 class="subsection-title">Exercise A: Sentence Pattern</h3>
+            <div class="conversation-box">
+                <div class="conversation-line"><div class="speaker">1.</div><p>This is a dictionary.</p><p><span class="answer-romaji">Kore wa jisho desu.</span></p></div>
+                <div class="conversation-line"><div class="speaker">2.</div><p>This is a book on computers.</p><p><span class="answer-romaji">Kore wa konpyūtā no hon desu.</span></p></div>
+                <div class="conversation-line"><div class="speaker">3.</div><p>That is my umbrella.</p><p><span class="answer-romaji">Are wa watashi no kasa desu.</span></p></div>
+                <div class="conversation-line"><div class="speaker">4.</div><p>This umbrella is mine.</p><p><span class="answer-romaji">Kono kasa wa watashi no desu.</span></p></div>
+            </div>
+
+            <h3 class="subsection-title">Example Sentences</h3>
+            <div class="conversation-box">
+                <div class="conversation-line">
+                    <div class="speaker">1.</div>
+                    <p>Is this a telephone card? → Yes, it is.</p>
+                    <p><span class="answer-romaji">Hai, sō desu.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">2.</div>
+                    <p>Is this a notebook? → No, it's not. It's a pocket notebook.</p>
+                    <p><span class="answer-romaji">Iie, chigaimasu. Techō desu.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">3.</div>
+                    <p>What is that? → This is a business card.</p>
+                    <p><span class="answer-romaji">Kore wa meishi desu.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">4.</div>
+                    <p>Is this a business card or a telephone card? → It's a business card.</p>
+                    <p><span class="answer-romaji">Meishi desu.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">5.</div>
+                    <p>Whose coffee is that? → It's Mr. Tanabi's coffee.</p>
+                    <p><span class="answer-romaji">Tanabi-san no kōhii desu.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">6.</div>
+                    <p>Is this chocolate yours? → No, it's not mine.</p>
+                    <p><span class="answer-romaji">Iie, watashi no ja arimasen.</span></p>
+                </div>
+                <div class="conversation-line">
+                    <div class="speaker">7.</div>
+                    <p>Whose magazine is this? → It's mine.</p>
+                    <p><span class="answer-romaji">Watashi no desu.</span></p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Exercise B: Conversation — This is just a Token</h3>
+            <div class="conversation-box">
+                <div class="conversation-line"><div class="speaker">Ramos:</div><p>Yes. Who is it?</p><p><span class="answer-romaji">Hai. Donata desu ka?</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ibarra:</div><p>I am Dante Ibarra from (apartment) 583.</p><p><span class="answer-romaji">Watashi wa go-happyaku hachijū san-gō no Dante Ibarra desu.</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ibarra:</div><p>Hello. I am Dante Ibarra. How do you do? It is nice to meet you.</p><p><span class="answer-romaji">Konnichiwa. Watashi wa Dante Ibarra desu. Hajimemashite. Dōzo yoroshiku.</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ramos:</div><p>The pleasure's mine.</p><p><span class="answer-romaji">Kochira koso.</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ibarra:</div><p>Hmm, this is a little something...</p><p><span class="answer-romaji">Etto, honno kimochi desu…</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ramos:</div><p>Oh, thank you. What is it?</p><p><span class="answer-romaji">Ā, arigatō. Nan desu ka?</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ibarra:</div><p>It's chocolate. Please.</p><p><span class="answer-romaji">Chokorēto desu. Dōzo.</span></p></div>
+                <div class="conversation-line"><div class="speaker">Ramos:</div><p>Thank you very much.</p><p><span class="answer-romaji">Dōmo arigatō gozaimasu.</span></p></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function speakWord(text) {
+            if (!('speechSynthesis' in window)) {
+                alert('Sorry, your browser does not support text-to-speech.');
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const synth = window.speechSynthesis;
+            const pickJapaneseVoice = () => {
+                const voices = synth.getVoices() || [];
+                // Prefer high-quality Japanese voices if available
+                const preferredNames = ['Google 日本語', 'Google Japanese', 'Microsoft Haruka', 'Microsoft Ayumi', 'Kyoko', 'Otoya'];
+                let voice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
+                for (const name of preferredNames) {
+                    const match = voices.find(v => (v.name || '').toLowerCase().includes(name.toLowerCase()));
+                    if (match) { voice = match; break; }
+                }
+                return voice;
+            };
+
+            const speak = () => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9; // slightly slower for clarity
+                utterance.pitch = 1;
+
+                const voice = pickJapaneseVoice();
+                if (voice) utterance.voice = voice;
+
+                window.speechSynthesis.speak(utterance);
+            };
+
+            // Some browsers need async voice loading
+            if (window.speechSynthesis.getVoices().length === 0) {
+                window.speechSynthesis.onvoiceschanged = speak;
+            } else {
+                speak();
+            }
+        }
+
+        function toggleCard(card) {
+            card.classList.toggle('active');
+        }
+    </script>
+</body>
+<!-- Content derived and structured from eBookLessons.md (Lesson 2) -->
+</html>
+
+

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Japanese Learning - Lesson 1</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;}
+        .container{max-width:1400px;margin:0 auto;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;animation:fadeIn .6s ease-out;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+        header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:40px;text-align:center;}
+        h1{font-size:2.5em;margin-bottom:10px;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}
+        .subtitle{font-size:1.2em;opacity:.9;}
+        .nav-tabs{display:flex;background:#f8f9fa;border-bottom:3px solid #667eea;overflow-x:auto;}
+        .nav-tab{flex:1;padding:20px;text-align:center;cursor:pointer;border:none;background:#f8f9fa;font-size:1.1em;font-weight:600;color:#555;transition:all .3s ease;white-space:nowrap;}
+        .nav-tab:hover{background:#e9ecef;color:#667eea;}
+        .nav-tab.active{background:white;color:#667eea;border-bottom:3px solid #667eea;}
+        .content-section{display:none;padding:40px;animation:slideIn .4s ease-out;}
+        .content-section.active{display:block;}
+        @keyframes slideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+        .section-title{font-size:2em;color:#667eea;margin-bottom:30px;padding-bottom:15px;border-bottom:3px solid #667eea;}
+        .subsection-title{font-size:1.5em;color:#764ba2;margin:30px 0 20px 0;padding-left:15px;border-left:5px solid #764ba2;}
+        .word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:40px;}
+        .word-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:15px;padding:25px;cursor:pointer;transition:all .3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.1);position:relative;overflow:visible;}
+        .word-card:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.2);}
+        .word-card.active{background:linear-gradient(135deg,#764ba2 0%,#667eea 100%);}
+        .japanese{font-size:2em;font-weight:bold;color:white;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+        .sound-icon{cursor:pointer;margin-left:8px;font-size:1em;}
+        .romaji{font-size:1.1em;color:rgba(255,255,255,0.9);margin-bottom:15px;font-style:italic;}
+        .english{font-size:1em;color:rgba(255,255,255,0.95);line-height:1.5;}
+        .translation-hidden{display:none;}
+        .word-card.active .translation-hidden{display:block;animation:fadeIn .3s ease-out;}
+        .grammar-box{background:#f8f9fa;border-left:5px solid #667eea;padding:20px;margin:20px 0;border-radius:8px;}
+        .grammar-example{margin:15px 0;padding:15px;background:white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+        .conversation-box{background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);padding:25px;margin:20px 0;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+        .conversation-line{margin:15px 0;padding:15px;background:white;border-radius:10px;border-left:4px solid #667eea;}
+        .speaker{font-weight:bold;color:#764ba2;margin-bottom:8px;}
+        .answer-romaji{color:#1e90ff;font-weight:600;}
+    </style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🇯🇵 Interactive Japanese Learning — Lesson 1</h1>
+<p class="subtitle">Click any Japanese to hear pronunciation</p>
+</header>
+
+
+<div class="nav-tabs">
+<button class="nav-tab active" onclick="showSection('lesson1')">Lesson 1</button>
+<button class="nav-tab" onclick="showSection('translation1')">Translation Activity 1</button>
+</div>
+
+<!-- LESSON 1 -->
+<div id="lesson1" class="content-section active">
+<h2 class="section-title">Lesson 1: Introductions, Pronouns, and Basic Grammar</h2>
+
+<h3 class="subsection-title">Vocabulary</h3>
+<div class="word-grid">
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">わたし <span class="sound-icon" onclick="event.stopPropagation();speakWord('わたし')">🔊</span></div>
+  <div class="romaji">Watashi</div><div class="english translation-hidden">I</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">わたしたち <span class="sound-icon" onclick="event.stopPropagation();speakWord('わたしたち')">🔊</span></div>
+  <div class="romaji">Watashitachi</div><div class="english translation-hidden">We</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">あなた <span class="sound-icon" onclick="event.stopPropagation();speakWord('あなた')">🔊</span></div>
+  <div class="romaji">Anata</div><div class="english translation-hidden">You</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">あのひと <span class="sound-icon" onclick="event.stopPropagation();speakWord('あのひと')">🔊</span></div>
+  <div class="romaji">Ano hito</div><div class="english translation-hidden">That person; he/she</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">みなさん <span class="sound-icon" onclick="event.stopPropagation();speakWord('みなさん')">🔊</span></div>
+  <div class="romaji">Minasan</div><div class="english translation-hidden">Everyone</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">せんせい <span class="sound-icon" onclick="event.stopPropagation();speakWord('せんせい')">🔊</span></div>
+  <div class="romaji">Sensei</div><div class="english translation-hidden">Teacher</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">がくせい <span class="sound-icon" onclick="event.stopPropagation();speakWord('がくせい')">🔊</span></div>
+  <div class="romaji">Gakusei</div><div class="english translation-hidden">Student</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">かいしゃいん <span class="sound-icon" onclick="event.stopPropagation();speakWord('かいしゃいん')">🔊</span></div>
+  <div class="romaji">Kaishain</div><div class="english translation-hidden">Company employee</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">いしゃ <span class="sound-icon" onclick="event.stopPropagation();speakWord('いしゃ')">🔊</span></div>
+  <div class="romaji">Isha</div><div class="english translation-hidden">Doctor</div></div>
+
+<div class="word-card" onclick="toggleCard(this)">
+  <div class="japanese">けんきゅうしゃ <span class="sound-icon" onclick="event.stopPropagation();speakWord('けんきゅうしゃ')">🔊</span></div>
+  <div class="romaji">Kenkyuusha</div><div class="english translation-hidden">Researcher</div></div>
+</div>
+
+<h3 class="subsection-title">Grammar Explanation</h3>
+<div class="grammar-box"><p><strong>1. N1 は N2 です</strong> — Used for identification.<br>Example: <span class="answer-romaji">わたし は ダンテ イバラ です。</span> → I am Dante Ibarra.</p></div>
+<div class="grammar-box"><p><strong>2. N1 は N2 じゃありません</strong> — Negative form.<br>Example: <span class="answer-romaji">ラモスさん は がくせい じゃ ありません。</span> → Ms. Ramos is not a student.</p></div>
+<div class="grammar-box"><p><strong>3. 〜か</strong> — Question particle.<br>Example: <span class="answer-romaji">イバラさん は フィリピンじん です か。</span> → Is Mr. Ibarra Filipino?</p></div>
+<div class="grammar-box"><p><strong>4. 〜も</strong> — “Also” or “too”.<br>Example: <span class="answer-romaji">タナビさん も エンジニア です。</span> → Mr. Tanabi is also an engineer.</p></div>
+<div class="grammar-box"><p><strong>5. N1 の N2</strong> — Possession or connection.<br>Example: <span class="answer-romaji">イバラさん は WU-P の しゃいん です。</span> → Mr. Ibarra is a WU-P employee.</p></div>
+<div class="grammar-box"><p><strong>6. 〜さん</strong> — Polite suffix.<br>Example: <span class="answer-romaji">イバラさん</span> → Mr. Ibarra</p></div>
+</div>
+
+<!-- TRANSLATION ACTIVITY -->
+<div id="translation1" class="content-section">
+<h2 class="section-title">Translation Activity 1</h2>
+<h3 class="subsection-title">Exercise A: Sentence Patterns</h3>
+<div class="conversation-box">
+<div class="conversation-line"><div class="speaker">1.</div><p>I am Dante Ibarra.<br><span class="answer-romaji">わたし は ダンテ イバラ です。</span></p></div>
+<div class="conversation-line"><div class="speaker">2.</div><p>Mr. Santos is not a student.<br><span class="answer-romaji">サントスさん は がくせい じゃ ありません。</span></p></div>
+<div class="conversation-line"><div class="speaker">3.</div><p>Is Mr. Ibarra a company employee?<br><span class="answer-romaji">イバラさん は かいしゃいん です か。</span></p></div>
+<div class="conversation-line"><div class="speaker">4.</div><p>Mr. Santos is also a company employee.<br><span class="answer-romaji">サントスさん も かいしゃいん です。</span></p></div>
+</div>
+
+<h3 class="subsection-title">Example Conversation</h3>
+<div class="conversation-box">
+<div class="conversation-line"><div class="speaker">トモヨ:</div><p>レイさん は がくせい です か。</p><p><span class="answer-romaji">Are you a student?</span></p></div>
+<div class="conversation-line"><div class="speaker">レイ:</div><p>いいえ、かいしゃいん です。</p><p><span class="answer-romaji">No, I’m a company employee.</span></p></div>
+<div class="conversation-line"><div class="speaker">イバラ:</div><p>はじめまして。ダンテ イバラ です。フィリピン から きました。どうぞ よろしく。</p><p><span class="answer-romaji">How do you do? I am Dante Ibarra from the Philippines. Nice to meet you.</span></p></div>
+</div>
+</div>
+
+</div>
+
+<script>
+function showSection(id){
+document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+event.target.classList.add('active');
+}
+function toggleCard(c){c.classList.toggle('active');}
+function speakWord(text){
+if(!('speechSynthesis'in window)){alert('TTS not supported');return;}
+window.speechSynthesis.cancel();
+const utter=new SpeechSynthesisUtterance(text);utter.lang='ja-JP';utter.rate=0.9;
+const v=window.speechSynthesis.getVoices().find(v=>v.lang.startsWith('ja'));
+if(v)utter.voice=v;window.speechSynthesis.speak(utter);
+}
+</script>
+</body>
+</html>
